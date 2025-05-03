@@ -43,7 +43,7 @@ impl CliErr {
 #[non_exhaustive]
 #[derive(Error, Debug, PartialEq, Eq)]
 pub enum ArgsValidationErr {
-    #[error("Couldn’t find a file extension for: '{0}'")]
+    #[error("Couldn't find a file extension for: '{0}'")]
     NoExtension(PathBuf),
 
     #[error("Unsupported file extension: '{0}'. Supported types are: {1}")]
