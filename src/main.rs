@@ -21,7 +21,7 @@ fn main() {
 fn run() -> Result<(), Vec<AppError>> {
     let args = Args::new();
 
-    init_logger(args.log_level.into()).unwrap();
+    init_logger(args.log_level.into()).unwrap(); // デフォルト値の使用やチェックが行われるため，処理失敗は起こりません
     debug!("The logging level has been set successfully.");
 
     args.validate()?;
