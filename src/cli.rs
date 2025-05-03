@@ -20,9 +20,9 @@ const ACCEPTABLE_EXTS: [&str; 1] = ["toml"];
 /// # Methods
 ///
 /// - `Args::new() -> Self`: Parses the command-line arguments and returns an instance of `Args`.
-/// - `Args::validate(&self) -> Result<()>`: Validate the path of the input file and the path of the output directory, which is the entry point for the validation check.
-/// - `Args::validate_input_file_path(&self, path: &Path) -> Result<()>`: Validates the input file path ensuring it exists and has a valid extension.
-/// - `Args::validate_output_dir_path(&self, path: &Path) -> Result<()>`: Validates the output directory path ensuring it exists or creates it if it does not.
+/// - `Args::validate(&self) -> Result<(), Vec<AppError>>`: Validate the path of the input file and the path of the output directory, which is the entry point for the validation check.
+/// - `Args::validate_input_file_path(&self, path: &Path) -> Result<(), CliError>`: Validates the input file path ensuring it exists and has a valid extension.
+/// - `Args::validate_output_dir_path(&self, path: &Path) -> Result<(), CliError>`: Validates that the output directory path exists.
 ///
 /// # Errors
 ///
