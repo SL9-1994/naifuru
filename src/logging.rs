@@ -39,6 +39,7 @@ pub fn init_logger(log_level: LevelFilter) -> Result<(), log::SetLoggerError> {
         .format_timestamp_secs()
         .format(|buf, record| {
             let level = match record.level() {
+                // WarnとTraceレベルは選択できないため，到達不可能
                 Level::Error => "\x1b[31mERROR\x1b[0m", // red
                 Level::Info => "\x1b[32mINFO\x1b[0m",   // green
                 Level::Debug => "\x1b[34mDEBUG\x1b[0m", // blue
