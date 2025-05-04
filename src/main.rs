@@ -1,5 +1,8 @@
 use log::{debug, error};
-use naifuru::{bail_on_error, cli::Args, error::AppError, logging::init_logger};
+use naifuru::{
+    analysis_config::Config, bail_on_error, cli::Args, error::AppError, logging::init_logger,
+    util::read_text,
+};
 
 const DEFAULT_ERROR_EXIT_CODE: i32 = 1;
 
@@ -26,6 +29,17 @@ fn run() -> Result<(), Vec<AppError>> {
 
     args.validate()?;
     debug!("The CLI args have been validated successfully.");
+
+    let config_toml_str =
+        read_text(&args.input_file_path).map_err(|e| vec![AppError::AnalysisConfig(e.into())])?;
+    debug!("The analysis configuration file has been loaded successfully.");
+
+    let config: Config =
+        toml::from_str(&config_toml_str).map_err(|e| vec![AppError::AnalysisConfig(e.into())])?;
+    debug!("The analysis configuration file has been parsed successfully.");
+
+    config.validate()?;
+    debug!("The analysis configuration file has been validated successfully.");
 
     Ok(())
 }
