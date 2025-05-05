@@ -2,12 +2,13 @@
 use crate::{
     analysis_config::{ConversionConfig, FromType},
     error::{AppError, ProcessErr},
+    model::seismic_ir::SeismicIr,
 };
 
 use super::tw_paleart_sac::TwPalertSacExtractor;
 
 pub trait Extractor {
-    fn extract(&self) -> Result<ExtractedData, Vec<AppError>>;
+    fn extract(&self) -> Result<SeismicIr, Vec<AppError>>;
 
     fn extract_latitude(&self) -> Result<f64, ProcessErr>;
 
@@ -32,33 +33,33 @@ pub fn create_extractor<'a>(conversion: &'a ConversionConfig) -> Box<dyn Extract
     }
 }
 
-pub enum ExtractedData {
-    JpStera3dTxt(JpStera3dTxtData),
-    JpJmaCsv(JpJmaCsvData),
-}
+// pub enum ExtractedData {
+//     JpStera3dTxt(JpStera3dTxtData),
+//     JpJmaCsv(JpJmaCsvData),
+// }
 
-#[derive(Debug, Clone, PartialEq)]
-pub struct JpStera3dTxtData {
-    num_of_elements: u32,
-    common: CommonValue,
-}
+// #[derive(Debug, Clone, PartialEq)]
+// pub struct JpStera3dTxtData {
+//     num_of_elements: u32,
+//     common: CommonValue,
+// }
 
-#[derive(Debug, Clone, PartialEq)]
-pub struct JpJmaCsvData {
-    site_code: String,
-    lat: f64,
-    lon: f64,
-    unit_type: String,
-    initial_time: String,
-    common: CommonValue,
-}
+// #[derive(Debug, Clone, PartialEq)]
+// pub struct JpJmaCsvData {
+//     site_code: String,
+//     lat: f64,
+//     lon: f64,
+//     unit_type: String,
+//     initial_time: String,
+//     common: CommonValue,
+// }
 
-#[derive(Debug, Clone, PartialEq)]
-pub struct CommonValue {
-    sampling_rate: Option<u32>,
-    delta_t: Option<f32>,
-    acc_values: Acceleration,
-}
+// #[derive(Debug, Clone, PartialEq)]
+// pub struct CommonValue {
+//     sampling_rate: Option<u32>,
+//     delta_t: Option<f32>,
+//     acc_values: Acceleration,
+// }
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Acceleration {
