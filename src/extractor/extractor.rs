@@ -21,7 +21,7 @@ pub trait Extractor {
     fn extract_initial_time(&self) -> Result<String, ProcessErr>;
 }
 
-pub fn create_extractor<'a>(conversion: &'a ConversionConfig) -> Box<dyn Extractor + 'a> {
+pub fn create_extractor(conversion: ConversionConfig) -> Box<dyn Extractor> {
     // fromに対応するextractorを呼び出す
     match conversion.from {
         FromType::JpNiedKnet => todo!(),
