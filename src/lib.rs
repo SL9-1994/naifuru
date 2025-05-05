@@ -8,3 +8,7 @@ pub mod extractor {
     pub mod extractor;
     pub mod tw_paleart_sac;
 }
+
+pub mod model {
+    pub mod seismic_ir;
+}
