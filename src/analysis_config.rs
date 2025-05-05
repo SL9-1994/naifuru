@@ -258,7 +258,7 @@ pub struct FileConfig {
 #[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 pub enum TextOrBinary {
     Text(Vec<String>),
-    Binary(Vec<[u8; 4]>),
+    Binary(Vec<u8>),
 }
 
 impl FileConfig {
