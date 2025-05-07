@@ -1,8 +1,8 @@
 // このモジュールは，Extractorで共通の処理やTrait等が置かれています
 use crate::{
-    analysis_config::{ConversionConfig, FromType},
+    analysis_config::FromType,
     error::{AppError, ProcessErr},
-    model::seismic_ir::SeismicIr,
+    model::ir::{FormatMetadata, Nvhdr, ProcessableFile, SeismicIr},
 };
 
 use super::tw_paleart_sac::TwPalertSacExtractor;
@@ -21,7 +21,7 @@ pub trait Extractor {
     fn extract_initial_time(&self) -> Result<String, ProcessErr>;
 }
 
-pub fn create_extractor(conversion: ConversionConfig) -> Box<dyn Extractor> {
+pub fn create_extractor(conversion: ProcessableFile) -> Box<dyn Extractor> {
     // fromに対応するextractorを呼び出す
     match conversion.from {
         FromType::JpNiedKnet => todo!(),
@@ -66,4 +66,27 @@ pub struct Acceleration {
     ns: Vec<f64>,
     ew: Vec<f64>,
     ud: Vec<f64>,
+}
+
+// モックデータ生成用
+pub fn mock_seismic_ir_data() -> SeismicIr {
+    SeismicIr {
+        num_of_elements: 3,
+        timestamp: "2025-05-06T12:34:56Z".to_string(),
+        acc_values: Acceleration {
+            ns: vec![0.1, 0.2, 0.3],
+            ew: vec![0.0, 0.1, 0.2],
+            ud: vec![-0.1, -0.2, -0.3],
+        },
+        source_metadata: FormatMetadata {
+            unit_type: "cm/s^2".to_string(),
+            nvhdr: Some(Nvhdr::Ver6),
+            delta_t: Some(0.01),
+            sampling_rate: Some(100),
+            site_code: "W339".to_string(),
+            lat: 24.123456,
+            lon: 121.654321,
+            ad_coefficients: 1.0,
+        },
+    }
 }
