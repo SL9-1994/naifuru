@@ -10,5 +10,5 @@ pub mod extractor {
 }
 
 pub mod model {
-    pub mod seismic_ir;
+    pub mod ir;
 }
