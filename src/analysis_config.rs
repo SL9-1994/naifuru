@@ -2,7 +2,10 @@ use std::{collections::HashSet, fmt::Write, path::PathBuf};
 
 use serde::{Deserialize, Serialize};
 
-use crate::error::{AnalysisConfigErr, AppError, ConfigValidationErr};
+use crate::{
+    error::{AnalysisConfigErr, AppError, ConfigValidationErr},
+    model::ir::ProcessableFile,
+};
 
 const MULTIPLE_AXIS_TYPE: [&FromType; 2] = [&FromType::JpNiedKnet, &FromType::TkAfadAsc];
 
@@ -147,6 +150,28 @@ impl ConversionConfig {
         }
 
         Ok(())
+    }
+
+    // tomlファイル構造体から処理構造体への変換
+    pub fn iter_processable_files(&self) -> Vec<ProcessableFile> {
+        let mut result = Vec::new();
+
+        for (g_idx, group) in self.group.iter().enumerate() {
+            for (f_idx, file) in group.files.iter().enumerate() {
+                result.push(ProcessableFile {
+                    conv_name: self.name.clone(),
+                    from: self.from.clone(),
+                    to: self.to.clone(),
+                    group_index: g_idx,
+                    file_index: f_idx,
+                    acc_axis: file.acc_axis.clone(),
+                    path: file.path.clone(),
+                    data: file.data.clone(),
+                });
+            }
+        }
+
+        result
     }
 
     // 加速度の方向成分が別々のファイルで指定されているタイプのファイル
