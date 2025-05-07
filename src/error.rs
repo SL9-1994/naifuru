@@ -17,6 +17,8 @@ pub enum AppError {
     Cli(#[from] CliErr),
     #[error("AnalysisConfigFile> {0}")]
     AnalysisConfig(#[from] AnalysisConfigErr),
+    #[error("Processor> {0}")]
+    Process(#[from] ProcessErr),
 }
 
 impl AppError {
@@ -24,6 +26,7 @@ impl AppError {
         match self {
             Self::Cli(e) => e.exit_code(),
             Self::AnalysisConfig(e) => e.exit_code(),
+            Self::Process(e) => e.exit_code(),
         }
     }
 }
@@ -104,7 +107,9 @@ pub enum ConfigValidationErr {
     #[error("The format '{0}' doesn't expect 'acc_axis', but it was set (name: '{1}', id: {2})")]
     MismatchedAccAxis(String, String, usize),
 
-    #[error("The format '{0}' needs all three axes: 'ns', 'ew', and 'ud'. Please check (name: '{1}', id: {2})")]
+    #[error(
+        "The format '{0}' needs all three axes: 'ns', 'ew', and 'ud'. Please check (name: '{1}', id: {2})"
+    )]
     DuplicateAccAxis(String, String, usize),
 
     #[error("Missing 'acc_axis' information (name: '{0}', id: {1})")]
@@ -112,4 +117,39 @@ pub enum ConfigValidationErr {
 
     #[error("Duplicate conversion names found. Each name must be unique: {0}")]
     DuplicateNames(String),
+}
+
+#[non_exhaustive]
+#[derive(Error, Debug)]
+pub enum ProcessErr {
+    #[error("Data extraction> {0}")]
+    Extraction(#[from] DataExtractionErr),
+    #[error(transparent)]
+    Io(#[from] std::io::Error),
+}
+
+impl ProcessErr {
+    pub fn exit_code(&self) -> i32 {
+        match self {
+            Self::Extraction(_) => 6,
+            Self::Io(_) => 4,
+        }
+    }
+}
+
+#[non_exhaustive]
+#[derive(Error, Debug)]
+pub enum DataExtractionErr {
+    #[error("Oops! Failed to determine endianness: {0}")]
+    EndianDetectionFailed(PathBuf),
+
+    // 将来的に対応する予定のフォーマット
+    #[error("'{0}' format is not supported. (It will be supported in the future)")]
+    FormatUnsupported(String),
+
+    #[error("Oops! File data is missing: {0}")]
+    MissingFileData(PathBuf),
+
+    #[error("Oops! Failed to extract '{0}': {1})")]
+    FailedExtraction(String, PathBuf),
 }
