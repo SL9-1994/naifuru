@@ -20,9 +20,8 @@ pub struct TwPalertSacExtractor {
 }
 
 impl Extractor for TwPalertSacExtractor {
-    fn extract(&self) -> Result<SeismicIr, Vec<AppError>> {
-        self.swap_little_endian()
-            .map_err(|e| vec![AppError::from(e)])?;
+    fn extract(&self) -> Result<SeismicIr, AppError> {
+        self.swap_little_endian()?;
 
         println!("{:?}", self.extract_latitude());
         println!("{:?}", self.extract_longitude());

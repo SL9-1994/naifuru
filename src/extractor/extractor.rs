@@ -8,7 +8,7 @@ use crate::{
 use super::tw_paleart_sac::TwPalertSacExtractor;
 
 pub trait Extractor {
-    fn extract(&self) -> Result<SeismicIr, Vec<AppError>>;
+    fn extract(&self) -> Result<SeismicIr, AppError>;
 
     fn extract_latitude(&self) -> Result<f64, ProcessErr>;
 

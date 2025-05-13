@@ -68,7 +68,7 @@ fn run() -> Result<(), Vec<AppError>> {
     for conv in &config.conversion {
         for file in conv.iter_processable_files() {
             let extractor = create_extractor(file);
-            let _extracted = extractor.extract()?;
+            let _extracted = extractor.extract().map_err(|e| vec![e])?; // TODO: エラー時にそのファイルだけスキップする処理
         }
     }
     Ok(())
