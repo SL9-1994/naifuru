@@ -54,11 +54,8 @@ fn run() -> Result<(), Vec<AppError>> {
             for file in &mut group.files {
                 let file_content: TextOrBinary = match read_text_as_lines(Path::new(&file.path)) {
                     Ok(content) => content,
-                    Err(_) => {
-                        let binary = read_binary(Path::new(&file.path))
-                            .map_err(|e| vec![AppError::Process(e.into())])?;
-                        binary
-                    }
+                    Err(_) => read_binary(Path::new(&file.path))
+                        .map_err(|e| vec![AppError::Process(e.into())])?,
                 };
                 file.data = Some(file_content);
             }

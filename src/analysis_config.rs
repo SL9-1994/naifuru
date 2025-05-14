@@ -141,7 +141,7 @@ impl ConversionConfig {
             let _ = group_config
                 .validate(&self.from, acceptable_exts, &self.name, id)
                 .map_err(|e| {
-                    errors.extend(e.into_iter().map(AnalysisConfigErr::from));
+                    errors.extend(e.into_iter());
                 });
         }
 
@@ -204,7 +204,7 @@ impl GroupConfig {
 
         for file in &self.files {
             let _ = file.validate(acceptable_exts).map_err(|e| {
-                errors.extend(e.into_iter().map(AnalysisConfigErr::from));
+                errors.extend(e.into_iter());
             });
         }
 
