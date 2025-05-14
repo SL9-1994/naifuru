@@ -5,7 +5,7 @@ use crate::{
     model::ir::{FormatMetadata, Nvhdr, ProcessableFile, SeismicIr},
 };
 
-use super::tw_paleart_sac::TwPalertSacExtractor;
+use super::jp_nied_knet_une::JpNiedKnetUneExtractor;
 
 pub trait Extractor {
     fn extract(&self) -> Result<SeismicIr, AppError>;
@@ -24,11 +24,11 @@ pub trait Extractor {
 pub fn create_extractor(conversion: ProcessableFile) -> Box<dyn Extractor> {
     // fromに対応するextractorを呼び出す
     match conversion.from {
-        FromType::JpNiedKnet => todo!(),
+        FromType::JpNiedKnet => Box::new(JpNiedKnetUneExtractor::new(conversion)),
         FromType::UsScsnV2 => todo!(),
         FromType::NzGeonetV1a => todo!(),
         FromType::NzGeonetV2a => todo!(),
-        FromType::TwPalertSac => Box::new(TwPalertSacExtractor::new(conversion)),
+        FromType::TwPalertSac => todo!(),
         FromType::TkAfadAsc => todo!(),
     }
 }
