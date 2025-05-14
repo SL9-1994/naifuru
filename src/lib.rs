@@ -6,7 +6,7 @@ pub mod util;
 
 pub mod extractor {
     pub mod extractor;
-    pub mod tw_paleart_sac;
+    pub mod jp_nied_knet_une;
 }
 
 pub mod model {
