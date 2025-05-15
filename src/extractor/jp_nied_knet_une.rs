@@ -40,3 +40,8 @@ impl JpNiedKnetUneExtractor {
         Self { unextracted }
     }
 }
+
+// 計算量削減のため，先にscale factorの分数を計算する
+fn _calculate_scale_factor(numerator: u64, denominator: u64) -> f64 {
+    (numerator / denominator) as f64
+}
