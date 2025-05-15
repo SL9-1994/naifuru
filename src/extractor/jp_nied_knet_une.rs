@@ -39,6 +39,10 @@ impl JpNiedKnetUneExtractor {
     pub fn new(unextracted: ProcessableFile) -> Self {
         Self { unextracted }
     }
+
+    fn extract_ad_scale_factor(&self) -> Result<f64, ProcessErr> {
+        todo!()
+    }
 }
 
 // A/D値とスケールファクタとの積を計算し，加速度値を求める
