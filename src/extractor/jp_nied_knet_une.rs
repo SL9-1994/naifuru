@@ -1,35 +1,36 @@
-use crate::model::ir::ProcessableFile;
+use crate::{
+    error::{AppError, ProcessErr},
+    model::ir::{ProcessableFile, SeismicIr},
+};
 
-use super::extractor::Extractor;
+use super::extractor::{Acceleration, Extractor};
 
 pub struct JpNiedKnetUneExtractor {
     pub unextracted: ProcessableFile,
 }
 
 impl Extractor for JpNiedKnetUneExtractor {
-    fn extract(&self) -> Result<crate::model::ir::SeismicIr, crate::error::AppError> {
+    fn extract(&self) -> Result<SeismicIr, AppError> {
         todo!()
     }
 
-    fn extract_latitude(&self) -> Result<f64, crate::error::ProcessErr> {
+    fn extract_latitude(&self) -> Result<f64, ProcessErr> {
         todo!()
     }
 
-    fn extract_longitude(&self) -> Result<f64, crate::error::ProcessErr> {
+    fn extract_longitude(&self) -> Result<f64, ProcessErr> {
         todo!()
     }
 
-    fn extract_unit_type(&self) -> Result<String, crate::error::ProcessErr> {
+    fn extract_unit_type(&self) -> Result<String, ProcessErr> {
         todo!()
     }
 
-    fn extract_acc_values(
-        &self,
-    ) -> Result<super::extractor::Acceleration, crate::error::ProcessErr> {
+    fn extract_acc_values(&self) -> Result<Acceleration, ProcessErr> {
         todo!()
     }
 
-    fn extract_initial_time(&self) -> Result<String, crate::error::ProcessErr> {
+    fn extract_initial_time(&self) -> Result<String, ProcessErr> {
         todo!()
     }
 }
