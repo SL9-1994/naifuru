@@ -24,7 +24,7 @@ pub struct FormatMetadata {
     pub site_code: String,
     pub lat: f64,
     pub lon: f64,
-    pub ad_coefficients: f64,
+    pub ad_coefficients: f64, // スケールファクタもこのフィールドに入ります．
 }
 
 #[derive(Debug)]
