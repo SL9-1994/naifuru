@@ -13,8 +13,16 @@ pub struct JpNiedKnetUneExtractor {
 
 impl Extractor for JpNiedKnetUneExtractor {
     fn extract(&self) -> Result<SeismicIr, AppError> {
-        let sf = self.extract_ad_scale_factor()?;
+        let _sf = self.extract_ad_scale_factor()?;
+
         // 複数ファイルの抽出関数切り替え(必要のない抽出をスキップ)
+        // nameをidとして使用>group_idx>file_idx
+        // name(g_idx=n, f_idx=1)の時はheader情報を取得
+        if self.unextracted.file_index == 0 {
+            // ヘッダー情報＋加速度値を抽出
+        } else {
+            // 2つ目以降は加速度値のみ抽出
+        }
 
         Ok(mock_seismic_ir_data())
     }
