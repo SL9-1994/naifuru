@@ -1,9 +1,11 @@
 use crate::{
-    error::{AppError, ProcessErr},
+    analysis_config::TextOrBinary,
+    error::{AppError, DataExtractionErr, ProcessErr},
     model::ir::{ProcessableFile, SeismicIr},
+    regex_pattern::RE_SCALE_FACTOR,
 };
 
-use super::extractor::{Acceleration, Extractor};
+use super::extractor::{Acceleration, Extractor, mock_seismic_ir_data};
 
 pub struct JpNiedKnetUneExtractor {
     pub unextracted: ProcessableFile,
@@ -11,7 +13,11 @@ pub struct JpNiedKnetUneExtractor {
 
 impl Extractor for JpNiedKnetUneExtractor {
     fn extract(&self) -> Result<SeismicIr, AppError> {
-        todo!()
+        let sf = self.extract_ad_scale_factor()?;
+
+        println!("{}", sf);
+
+        Ok(mock_seismic_ir_data())
     }
 
     fn extract_latitude(&self) -> Result<f64, ProcessErr> {
@@ -54,5 +60,5 @@ fn _to_acceleration_using_scale_factor(scale_factor: f64, ad_values: Vec<f64>) -
 
 // 計算量削減のため，先にscale factorの分数を計算する
 fn calculate_scale_factor(numerator: u64, denominator: u64) -> f64 {
-    (numerator / denominator) as f64
+    (numerator as f64 / denominator as f64)
 }
