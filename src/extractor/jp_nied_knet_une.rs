@@ -13,26 +13,85 @@ pub struct JpNiedKnetUneExtractor {
 
 impl Extractor for JpNiedKnetUneExtractor {
     fn extract(&self) -> Result<SeismicIr, AppError> {
-        let _sf = self.extract_ad_scale_factor()?;
-
         // 複数ファイルの抽出関数切り替え(必要のない抽出をスキップ)
         // nameをidとして使用>group_idx>file_idx
         // name(g_idx=n, f_idx=1)の時はheader情報を取得
         if self.unextracted.file_index == 0 {
             // ヘッダー情報＋加速度値を抽出
+            let _sf = self.extract_ad_scale_factor()?;
+            let _lat = self.extract_latitude()?;
+            let _lon = self.extract_longitude()?;
+            // headerありでIrを組み立て
         } else {
             // 2つ目以降は加速度値のみ抽出
+            // Optionでheaderの無いIrを組み立て
         }
 
         Ok(mock_seismic_ir_data())
     }
 
     fn extract_latitude(&self) -> Result<f64, ProcessErr> {
-        todo!()
+        match &self.unextracted.data {
+            Some(TextOrBinary::Text(txt_data)) => {
+                let lat_line = txt_data.get(1).ok_or_else(|| {
+                    DataExtractionErr::MissingFileData(
+                        "Line 2".to_string(),
+                        self.unextracted.path.clone(),
+                    )
+                })?;
+
+                let mut lat_line_iter = lat_line.split_whitespace();
+
+                if let Some(element) = lat_line_iter.nth(1) {
+                    let latitude = element.parse::<f64>().map_err(|_| {
+                        DataExtractionErr::PatternNotMatched(
+                            "latitude".to_string(),
+                            self.unextracted.path.clone(),
+                        )
+                    })?;
+                    Ok(latitude)
+                } else {
+                    Err(DataExtractionErr::MissingFileData(
+                        "latitude".to_string(),
+                        self.unextracted.path.clone(),
+                    ))?
+                }
+            }
+            Some(TextOrBinary::Binary(_bin_data)) => unimplemented!(),
+            None => unreachable!(),
+        }
     }
 
     fn extract_longitude(&self) -> Result<f64, ProcessErr> {
-        todo!()
+        match &self.unextracted.data {
+            Some(TextOrBinary::Text(txt_data)) => {
+                let lat_line = txt_data.get(2).ok_or_else(|| {
+                    DataExtractionErr::MissingFileData(
+                        "Line 3".to_string(),
+                        self.unextracted.path.clone(),
+                    )
+                })?;
+
+                let mut lon_line_iter = lat_line.split_whitespace();
+
+                if let Some(element) = lon_line_iter.nth(1) {
+                    let longitude = element.parse::<f64>().map_err(|_| {
+                        DataExtractionErr::PatternNotMatched(
+                            "longitude".to_string(),
+                            self.unextracted.path.clone(),
+                        )
+                    })?;
+                    Ok(longitude)
+                } else {
+                    Err(DataExtractionErr::MissingFileData(
+                        "longitude".to_string(),
+                        self.unextracted.path.clone(),
+                    ))?
+                }
+            }
+            Some(TextOrBinary::Binary(_bin_data)) => unimplemented!(),
+            None => unreachable!(),
+        }
     }
 
     fn extract_unit_type(&self) -> Result<String, ProcessErr> {
@@ -89,7 +148,7 @@ impl JpNiedKnetUneExtractor {
                         // 後のA/D値->加速度計算負荷軽減のために，先にスケールファクタの除算を計算
                         Ok(calculate_scale_factor(numerator, denominator))
                     } else {
-                        Err(DataExtractionErr::RegexNotMatched(
+                        Err(DataExtractionErr::PatternNotMatched(
                             "scale factor".to_string(),
                             self.unextracted.path.clone(),
                         ))?
