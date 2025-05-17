@@ -154,5 +154,5 @@ pub enum DataExtractionErr {
     FailedExtraction(String, PathBuf),
 
     #[error("The extraction pattern of '{0}' was not matched, the data format is invalid: {1}")]
-    RegexNotMatched(String, PathBuf),
+    PatternNotMatched(String, PathBuf),
 }
