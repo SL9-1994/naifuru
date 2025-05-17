@@ -147,9 +147,12 @@ pub enum DataExtractionErr {
     #[error("'{0}' format is not supported. (It will be supported in the future)")]
     FormatUnsupported(String),
 
-    #[error("Oops! File data is missing: {0}")]
-    MissingFileData(PathBuf),
+    #[error("Oops! '{0}' is missing: {1}")]
+    MissingFileData(String, PathBuf),
 
     #[error("Oops! Failed to extract '{0}': {1})")]
     FailedExtraction(String, PathBuf),
+
+    #[error("The extraction pattern of '{0}' was not matched, the data format is invalid: {1}")]
+    RegexNotMatched(String, PathBuf),
 }
