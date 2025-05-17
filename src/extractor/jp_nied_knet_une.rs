@@ -14,8 +14,7 @@ pub struct JpNiedKnetUneExtractor {
 impl Extractor for JpNiedKnetUneExtractor {
     fn extract(&self) -> Result<SeismicIr, AppError> {
         let sf = self.extract_ad_scale_factor()?;
-
-        println!("{}", sf);
+        // 複数ファイルの抽出関数切り替え(必要のない抽出をスキップ)
 
         Ok(mock_seismic_ir_data())
     }
@@ -47,7 +46,56 @@ impl JpNiedKnetUneExtractor {
     }
 
     fn extract_ad_scale_factor(&self) -> Result<f64, ProcessErr> {
-        todo!()
+        match &self.unextracted.data {
+            Some(TextOrBinary::Text(txt_data)) => {
+                let unprocessed_scale_factor = txt_data.get(13).ok_or_else(|| {
+                    DataExtractionErr::MissingFileData(
+                        "Line 14".to_string(),
+                        self.unextracted.path.clone(),
+                    )
+                })?;
+
+                let mut split_sf_iter = unprocessed_scale_factor.split_whitespace();
+
+                if let Some(element) = split_sf_iter.nth(2) {
+                    if let Some(caps) = RE_SCALE_FACTOR.captures(element) {
+                        let numerator = caps
+                            .name("numerator")
+                            .and_then(|m| m.as_str().parse::<u64>().ok())
+                            .ok_or_else(|| {
+                                DataExtractionErr::MissingFileData(
+                                    "scale factor numerator".to_string(),
+                                    self.unextracted.path.clone(),
+                                )
+                            })?;
+                        let denominator = caps
+                            .name("denominator")
+                            .and_then(|m| m.as_str().parse::<u64>().ok())
+                            .ok_or_else(|| {
+                                DataExtractionErr::MissingFileData(
+                                    "scale factor denominator".to_string(),
+                                    self.unextracted.path.clone(),
+                                )
+                            })?;
+
+                        // 後のA/D値->加速度計算負荷軽減のために，先にスケールファクタの除算を計算
+                        Ok(calculate_scale_factor(numerator, denominator))
+                    } else {
+                        Err(DataExtractionErr::RegexNotMatched(
+                            "scale factor".to_string(),
+                            self.unextracted.path.clone(),
+                        ))?
+                    }
+                } else {
+                    Err(DataExtractionErr::MissingFileData(
+                        "scale factor".to_string(),
+                        self.unextracted.path.clone(),
+                    ))?
+                }
+            }
+            Some(TextOrBinary::Binary(_bin_data)) => unimplemented!(), // MEMO: K-net, Kik-net バイナリ形式には未対応(対応予定)
+            None => unreachable!(), // データの存在は担保されている
+        }
     }
 }
 
@@ -60,5 +108,5 @@ fn _to_acceleration_using_scale_factor(scale_factor: f64, ad_values: Vec<f64>) -
 
 // 計算量削減のため，先にscale factorの分数を計算する
 fn calculate_scale_factor(numerator: u64, denominator: u64) -> f64 {
-    (numerator as f64 / denominator as f64)
+    numerator as f64 / denominator as f64
 }
